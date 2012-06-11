@@ -35,12 +35,29 @@ def collatz_read (r, a) :
 def cycle_length (n) :
     assert n > 0
     c = 1
+    sequence = [n, ]
     while n > 1 :
+	if n < cBaseIndReps + CACHE_SIZE :
+	  index = (cacheBaseInd + n - cBaseIndReps) % CACHE_SIZE
+	  if cached[index] != 0 : # that number has a cycleLength already found
+	    for w in range(len(sequence) - 1) :
+	      if sequence[w + 1] < cBaseIndReps + CACHE_SIZE :
+		cached[sequence[w + 1]] = cached[index] + w + 1
+	    break
         if (n % 2) == 0 :
             n = (n / 2)
         else :
             n = (3 * n) + 1
         c += 1
+        sequence = [n, ] + sequence
+    print sequence
+    # now cache the sequence
+    if n == 1 :
+      for w in range(len(sequence)) :
+	if sequence[w] < cBaseIndReps + CACHE_SIZE :
+	  index = (cacheBaseInd + sequence[w] - cBaseIndReps) % CACHE_SIZE
+	  cached [index] = w + 1 
+    
     assert c > 0
     return c    
 
