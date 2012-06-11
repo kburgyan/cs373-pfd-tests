@@ -31,7 +31,7 @@ def collatz_read (r, a) :
 # -----------
 # collatz_cycle_length
 # ---------
-"""
+
 def cycle_length (n) :
     assert n > 0
     c = 1
@@ -43,28 +43,42 @@ def cycle_length (n) :
         c += 1
     assert c > 0
     return c    
-"""
 
 
-def cycle_length (n) :
+
+def cycle_length2 (n) :
     assert n > 0
     c = 1
     while n > 1 :
-	if cached[n - smallerIndex] <= 0 :
-	  if (n % 2) == 0 :
+	# diagnostic prints
+        print "smallerRngeLmt: ", smallerRngeLmt
+        print "n: ", n
+        
+        if n < cBaseIndReps + CACHE_SIZE : 	# if "current < cBaseIndReps + CACHE_SIZE"
+						# then n is cacheable
+	  index = (cacheBaseInd + n - cBaseIndReps) % CACHE_SIZE
+	  if cached[n - smallerRngeLmt] <= 0 :	
+	    if (n % 2) == 0 :
 	  
-	      n = (n / 2)
+		n = (n / 2)
+	    else :
+		n = (3 * n) + 1
+	    c += 1
 	  else :
-	      n = (3 * n) + 1
-	  c += 1
-	else :
-	  c += cached[n - smallerIndex]
-	  n = 1
+	    c += cached[n - smallerRngeLmt]
+	    n = 1
     assert c > 0
+    
+    # calculate cached index from cacheBaseInd,
+    # cBaseIndReps, and current
+    if current < cBaseIndReps + CACHE_SIZE :
+      index = (cacheBaseInd + current - cBaseIndReps) % CACHE_SIZE
+      cached [index] = currentCycleLength
+    
     return c 
 
-def threeToTwoCycle (n) :
-  
+#def threeToTwoCycle (n) :
+
   
 
 
@@ -85,13 +99,44 @@ def collatz_eval (i, j) :
       current = i
       max = j
     else :
-      smallerIndex = j
+      smallerRngeLmt = j
       current = j
       max = i
+    cBaseIndReps = smallerRngeLmt
     maxCycleLength = 1
     currentCycleLength = 0
+    index = 0
+    # Progress to the 1st special-odd
+    # A special-odd is one that you can subtract 2 
+    # from its cycle to get the cycle_length of
+    # a corresponding even
+    # ergo--> "&& (current <= 1 || current % 4 != 1)"
+    while current <= max && (current <= 1 || current % 4 != 1):
+      currentCycleLength = cycle_length(current)
+      # see if new maximum was found
+      if currentCycleLength > maxCycleLength :
+	maxCycleLength = currentCycleLength
+      current = current + 1
+      
+    # current has is currently pointing to a special-odd
+    while current + 3 <= max :
+      currentCycleLength = cycle_length2(current)
+      
+      
+      
+      # see if new maximum was found
+      if currentCycleLength > maxCycleLength :
+	maxCycleLength = currentCycleLength
+      current = current + 1
+    
+    
+    # last 3 or fewer numbers to calculate
     while current <= max :
-      currentCycleLength = threeToTwoCycle(current)
+      currentCycleLength = cycle_length(current)
+      
+      
+      
+      # see if new maximum was found
       if currentCycleLength > maxCycleLength :
 	maxCycleLength = currentCycleLength
       current = current + 1
@@ -126,7 +171,7 @@ def collatz_solve (r, w) :
     """
     #a = [0, 0]
     while collatz_read(r, a) :
-	smallerIndex = a[0]
+	smallerRngeLmt = a[0]
         v = collatz_eval(a[0], a[1])
         collatz_print(w, a[0], a[1], v)
         
@@ -139,7 +184,21 @@ import sys
 # ----
 # main
 # ----
-smallerIndex = 0
+current = 0
+cacheBaseInd = 0 	# going to create a looping array for a cache; 
+			# this is the base of the array;
+			# this is incremented when deleting cached values that 
+			# are no longer necessary
+			
+cBaseIndReps = 0 	# the number corresponding to the cycle length
+			# that's stored at the cache's base index
+			# denoted by cacheBaseIndex
+smallerRngeLmt = 0
 a = [0, 0]
 cached = [0, ]
+h = [0, ]
+CACHE_SIZE = 1000
+for n in range(CACHE_SIZE): 	# setting up cache of size CACHE_SIZE
+  cached += h			# with initial values of 0
+print cached
 collatz_solve(sys.stdin, sys.stdout)
