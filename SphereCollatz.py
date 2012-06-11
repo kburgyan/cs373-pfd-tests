@@ -13,11 +13,11 @@
 
 def collatz_read (r, a) :
     """
-    reads two ints into a[0] and a[1]
-    r is a reader
-    a is an array on int
-    return true if that succeeds, false otherwise
-    """
+reads two ints into a[0] and a[1]
+r is a reader
+a is an array on int
+return true if that succeeds, false otherwise
+"""
     s = r.readline()
     if s == "" :
         return False
@@ -27,46 +27,6 @@ def collatz_read (r, a) :
     assert a[0] > 0
     assert a[1] > 0
     return True
-    
-# -----------
-# collatz_cycle_length
-# ---------
-"""
-def cycle_length (n) :
-    assert n > 0
-    c = 1
-    while n > 1 :
-        if (n % 2) == 0 :
-            n = (n / 2)
-        else :
-            n = (3 * n) + 1
-        c += 1
-    assert c > 0
-    return c    
-"""
-
-
-def cycle_length (n) :
-    assert n > 0
-    c = 1
-    while n > 1 :
-	if cached[n - smallerIndex] <= 0 :
-	  if (n % 2) == 0 :
-	  
-	      n = (n / 2)
-	  else :
-	      n = (3 * n) + 1
-	  c += 1
-	else :
-	  c += cached[n - smallerIndex]
-	  n = 1
-    assert c > 0
-    return c 
-
-def threeToTwoCycle (n) :
-  
-  
-
 
 # ------------
 # collatz_eval
@@ -74,31 +34,16 @@ def threeToTwoCycle (n) :
 
 def collatz_eval (i, j) :
     """
-    i is the beginning of the range, inclusive
-    j is the end of the range, inclusive
-    return the max cycle length in the range [i, j]
-    """
-    #assert i = j
+i is the beginning of the range, inclusive
+j is the end of the range, inclusive
+return the max cycle length in the range [i, j]
+"""
     assert i > 0
     assert j > 0
-    if i < j :
-      current = i
-      max = j
-    else :
-      smallerIndex = j
-      current = j
-      max = i
-    maxCycleLength = 1
-    currentCycleLength = 0
-    while current <= max :
-      currentCycleLength = threeToTwoCycle(current)
-      if currentCycleLength > maxCycleLength :
-	maxCycleLength = currentCycleLength
-      current = current + 1
     # <your code>
-    #v = 1
-    assert maxCycleLength > 0
-    return maxCycleLength
+    v = 1
+    assert v > 0
+    return v
 
 # -------------
 # collatz_print
@@ -106,12 +51,12 @@ def collatz_eval (i, j) :
 
 def collatz_print (w, i, j, v) :
     """
-    prints the values of i, j, and v
-    w is a writer
-    i is the beginning of the range, inclusive
-    j is the end of the range, inclusive
-    v is the max cycle length
-    """
+prints the values of i, j, and v
+w is a writer
+i is the beginning of the range, inclusive
+j is the end of the range, inclusive
+v is the max cycle length
+"""
     w.write(str(i) + " " + str(j) + " " + str(v) + "\n")
 
 # -------------
@@ -120,26 +65,11 @@ def collatz_print (w, i, j, v) :
 
 def collatz_solve (r, w) :
     """
-    read, eval, print loop
-    r is a reader
-    w is a writer
-    """
-    #a = [0, 0]
+read, eval, print loop
+r is a reader
+w is a writer
+"""
+    a = [0, 0]
     while collatz_read(r, a) :
-	smallerIndex = a[0]
         v = collatz_eval(a[0], a[1])
         collatz_print(w, a[0], a[1], v)
-        
-        
-        
-import sys
-
-#from Collatz import collatz_solve
-
-# ----
-# main
-# ----
-smallerIndex = 0
-a = [0, 0]
-cached = [0, ]
-collatz_solve(sys.stdin, sys.stdout)
