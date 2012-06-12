@@ -37,32 +37,48 @@ def cycle_length (n) :
     c = 1
     sequence = [n, ]
     while n > 1 :
-	if n < cBaseIndReps + CACHE_SIZE :
+	if n < cBaseIndReps + CACHE_SIZE : # is n within cache range?
 	  index = (cacheBaseInd + n - cBaseIndReps) % CACHE_SIZE
-	  if cached[index] != 0 : # that number has a cycleLength already found
-	    for w in range(len(sequence) - 1) :
-	      if sequence[w + 1] < cBaseIndReps + CACHE_SIZE :
-		cached[sequence[w + 1]] = cached[index] + w + 1
-	    break
+	  if cached[index] != 0 : # number has a cycleLength already found?
+	    if n % 4 == 1 && n > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	      n2 = (n - 1) / 4 * 6 + 2	# calculate corresponding even
+	      if n2 < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+		index3 =  (cacheBaseInd + n2 - cBaseIndReps) % CACHE_SIZE
+		cached[index3] = cached[index] - 2 # corresponding even is always minus 2
+	    for w in range(len(sequence) - 1) : # store the cycle_length for previous values of n
+	      if sequence[w + 1] < cBaseIndReps + CACHE_SIZE : # is previous n within cache range?
+		index2 = (cacheBaseInd + sequence[w + 1] - cBaseIndReps) % CACHE_SIZE
+		cached[index2] = cached[index] + w + 1
+	        if sequence[w + 1] % 4 == 1 && sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+		  n2 = (sequence[w + 1] - 1) / 4 * 6 + 2	# calculate corresponding even
+		  if n2 < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+		    index3 =  (cacheBaseInd + n2 - cBaseIndReps) % CACHE_SIZE
+		    cached[index3] = cached[index2] - 2 # corresponding even is always minus 2
+	    break # breaks out of the while loop
         if (n % 2) == 0 :
             n = (n / 2)
         else :
             n = (3 * n) + 1
         c += 1
         sequence = [n, ] + sequence
-    print sequence
+    #print sequence
     # now cache the sequence
     if n == 1 :
-      for w in range(len(sequence)) :
-	if sequence[w] < cBaseIndReps + CACHE_SIZE :
-	  index = (cacheBaseInd + sequence[w] - cBaseIndReps) % CACHE_SIZE
-	  cached [index] = w + 1 
+      for w in range(len(sequence) - 1) :
+	if sequence[w + 1] < cBaseIndReps + CACHE_SIZE :
+	  index = (cacheBaseInd + sequence[w + 1] - cBaseIndReps) % CACHE_SIZE
+	  cached [index] = w + 2 
+	  if sequence[w + 1] % 4 == 1 && sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	    n2 = (sequence[w + 1] - 1) / 4 * 6 + 2	# calculate corresponding even
+	    if n2 < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+	      index3 =  (cacheBaseInd + n2 - cBaseIndReps) % CACHE_SIZE
+	      cached[index3] = cached[index2] - 2 # corresponding even is always minus 2
     
     assert c > 0
     return c    
 
 
-
+"""
 def cycle_length2 (n) :
     assert n > 0
     c = 1
@@ -93,7 +109,7 @@ def cycle_length2 (n) :
       cached [index] = currentCycleLength
     
     return c 
-
+"""
 #def threeToTwoCycle (n) :
 
   
@@ -123,6 +139,8 @@ def collatz_eval (i, j) :
     maxCycleLength = 1
     currentCycleLength = 0
     index = 0
+    
+    """
     # Progress to the 1st special-odd
     # A special-odd is one that you can subtract 2 
     # from its cycle to get the cycle_length of
@@ -134,9 +152,11 @@ def collatz_eval (i, j) :
       if currentCycleLength > maxCycleLength :
 	maxCycleLength = currentCycleLength
       current = current + 1
-      
+    
+    
     # current has is currently pointing to a special-odd
     while current + 3 <= max :
+      specialOdd = true
       currentCycleLength = cycle_length2(current)
       
       
@@ -145,7 +165,7 @@ def collatz_eval (i, j) :
       if currentCycleLength > maxCycleLength :
 	maxCycleLength = currentCycleLength
       current = current + 1
-    
+    """
     
     # last 3 or fewer numbers to calculate
     while current <= max :
@@ -201,6 +221,8 @@ import sys
 # ----
 # main
 # ----
+
+specialOdd = false
 current = 0
 cacheBaseInd = 0 	# going to create a looping array for a cache; 
 			# this is the base of the array;
