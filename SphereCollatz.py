@@ -35,25 +35,39 @@ def collatz_read (r, a) :
 def cycle_length (n) :
     assert n > 0
     c = 1
+    originN = n
     sequence = [n, ]
+    print "n: ", n
     while n > 1 :
 	if n < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+	  print "A"
 	  index = (cacheBaseInd + n - cBaseIndReps) % CACHE_SIZE
 	  if cached[index] != 0 : # number has a cycleLength already found?
-	    if n % 4 == 1 && n > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	    print "b"
+	    if n % 4 == 1 and n > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	      print "c"
 	      n2 = (n - 1) / 4 * 6 + 2	# calculate corresponding even
 	      if n2 < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+		print "d"
 		index3 =  (cacheBaseInd + n2 - cBaseIndReps) % CACHE_SIZE
 		cached[index3] = cached[index] - 2 # corresponding even is always minus 2
+	    print "d/e"
+	    print range(len(sequence) - 1)
 	    for w in range(len(sequence) - 1) : # store the cycle_length for previous values of n
+	      print "e"
 	      if sequence[w + 1] < cBaseIndReps + CACHE_SIZE : # is previous n within cache range?
 		index2 = (cacheBaseInd + sequence[w + 1] - cBaseIndReps) % CACHE_SIZE
+		print "f"
 		cached[index2] = cached[index] + w + 1
-	        if sequence[w + 1] % 4 == 1 && sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	        if sequence[w + 1] % 4 == 1 and sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+		  print "g"
 		  n2 = (sequence[w + 1] - 1) / 4 * 6 + 2	# calculate corresponding even
 		  if n2 < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+		    print "h"
 		    index3 =  (cacheBaseInd + n2 - cBaseIndReps) % CACHE_SIZE
 		    cached[index3] = cached[index2] - 2 # corresponding even is always minus 2
+	    c = cached[(cacheBaseInd + originN - cBaseIndReps) % CACHE_SIZE]
+	    #c += 1
 	    break # breaks out of the while loop
         if (n % 2) == 0 :
             n = (n / 2)
@@ -64,16 +78,23 @@ def cycle_length (n) :
     #print sequence
     # now cache the sequence
     if n == 1 :
+      print "i"
       for w in range(len(sequence) - 1) :
+	print "j"
 	if sequence[w + 1] < cBaseIndReps + CACHE_SIZE :
+	  print "k"
 	  index = (cacheBaseInd + sequence[w + 1] - cBaseIndReps) % CACHE_SIZE
 	  cached [index] = w + 2 
-	  if sequence[w + 1] % 4 == 1 && sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	  if sequence[w + 1] % 4 == 1 and sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
+	    print "L"
 	    n2 = (sequence[w + 1] - 1) / 4 * 6 + 2	# calculate corresponding even
 	    if n2 < cBaseIndReps + CACHE_SIZE : # is n within cache range?
+	      print "m"
 	      index3 =  (cacheBaseInd + n2 - cBaseIndReps) % CACHE_SIZE
 	      cached[index3] = cached[index2] - 2 # corresponding even is always minus 2
-    
+    for w in range(20):
+      print "w: ", w, "  cached[w]: ", cached[w]
+    print "c: ", c
     assert c > 0
     return c    
 
@@ -129,6 +150,7 @@ def collatz_eval (i, j) :
     assert i > 0
     assert j > 0
     if i < j :
+      smallerRngeLmt = i
       current = i
       max = j
     else :
@@ -222,7 +244,7 @@ import sys
 # main
 # ----
 
-specialOdd = false
+#specialOdd = false
 current = 0
 cacheBaseInd = 0 	# going to create a looping array for a cache; 
 			# this is the base of the array;
@@ -232,7 +254,7 @@ cacheBaseInd = 0 	# going to create a looping array for a cache;
 cBaseIndReps = 0 	# the number corresponding to the cycle length
 			# that's stored at the cache's base index
 			# denoted by cacheBaseIndex
-smallerRngeLmt = 0
+#smallerRngeLmt = 0
 a = [0, 0]
 cached = [0, ]
 h = [0, ]
