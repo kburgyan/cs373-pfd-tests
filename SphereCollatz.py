@@ -38,55 +38,47 @@ def cycle_length (n) :
     originN = n
     if originN >= cacheBaseIndAndRep[1] + CACHE_SIZE : # is originN out of cache range?
       cacheBaseIndAndRep[1] += 1
-      print "BEFORE originN: ", originN, "cacheBaseIndAndRep: ", cacheBaseIndAndRep[0]
+      cached[cacheBaseIndAndRep[0]] = 0 # deleting old value
       if cacheBaseIndAndRep[0] < CACHE_SIZE - 1 :
 	cacheBaseIndAndRep[0] += 1
-	print "originN: ", originN, "cacheBaseIndAndRep: ", cacheBaseIndAndRep[0]
-	print "Rep: ", cacheBaseIndAndRep[1]
       else :
 	cacheBaseIndAndRep[0] = 0
-	print "originN: ", originN, "cacheBaseIndAndRep: ", cacheBaseIndAndRep[0]
-	print "Rep: ", cacheBaseIndAndRep[1]
     sequence = [n, ]
-    print "n: ", n
+    #print "n: ", n
     while n > 1 :
-	if n < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
-	  print "A"
+	if cacheBaseIndAndRep[1] <= n < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
+	  #print "A"
 	  index = (cacheBaseIndAndRep[0] + n - cacheBaseIndAndRep[1]) % CACHE_SIZE
 	  if cached[index] != 0 : # number has a cycleLength already found?
-	    print "b"
+	    #print "b"
+	    #****************************************************
 	    if n % 4 == 1 and n > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
-	      print "c"
+	      #print "c"
 	      n2 = (n - 1) / 4 * 6 + 2	# calculate corresponding even
-	      if n2 < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
-		print "d"
+	      if cacheBaseIndAndRep[1] <= n2 < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
+		#print "d"
 		index3 =  (cacheBaseIndAndRep[0] + n2 - cacheBaseIndAndRep[1]) % CACHE_SIZE
 		cached[index3] = cached[index] - 2 # corresponding even is always minus 2
-	    print "d/e"
-	    print range(len(sequence) - 1)
-	    print "sequenc: ", sequence
-	    print "seque[0]: ", sequence[0]
+	    #****************************************************
 	    for w in range(len(sequence) - 1) : # store the cycle_length for previous values of n
-	      print "e"
-	      if sequence[w + 1] < cacheBaseIndAndRep[1] + CACHE_SIZE : # is previous n within cache range?
+	      #print "e"
+	      if cacheBaseIndAndRep[1] <= sequence[w + 1] < cacheBaseIndAndRep[1] + CACHE_SIZE : # is previous n within cache range?
 		index2 = (cacheBaseIndAndRep[0] + sequence[w + 1] - cacheBaseIndAndRep[1]) % CACHE_SIZE
-		print "f"
+		#print "f"
 		cached[index2] = cached[index] + w + 1
+		
+	    #****************************************************
 	        if sequence[w + 1] % 4 == 1 and sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
-		  print "g"
+		  #print "g"
 		  n2 = (sequence[w + 1] - 1) / 4 * 6 + 2	# calculate corresponding even
-		  if n2 < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
-		    print "h"
+		  if cacheBaseIndAndRep[1] <= n2 < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
+		    #print "h"
 		    index3 =  (cacheBaseIndAndRep[0] + n2 - cacheBaseIndAndRep[1]) % CACHE_SIZE
 		    cached[index3] = cached[index2] - 2 # corresponding even is always minus 2
-	      #else :
+	    #****************************************************
 		
-	    print "h/i"
+	    #print "h/i"
 	    c = cached[(cacheBaseIndAndRep[0] + originN - cacheBaseIndAndRep[1]) % CACHE_SIZE]
-	    print "interior c: ", c
-	    print "originN: ", originN
-	    print "cacheBase: ", cacheBaseIndAndRep[0], "    cacheBaseRep: ", cacheBaseIndAndRep[1]
-	    #c += 1
 	    break # breaks out of the while loop
         if (n % 2) == 0 :
             n = (n / 2)
@@ -97,23 +89,23 @@ def cycle_length (n) :
     #print sequence
     # now cache the sequence
     if n == 1 :
-      print "i"
+      #print "i"
       for w in range(len(sequence) - 1) :
-	print "j"
-	if sequence[w + 1] < cacheBaseIndAndRep[1] + CACHE_SIZE :
-	  print "k"
+	#print "j"
+	if cacheBaseIndAndRep[1] <= sequence[w + 1] < cacheBaseIndAndRep[1] + CACHE_SIZE :
+	  #print "k"
 	  index = (cacheBaseIndAndRep[0] + sequence[w + 1] - cacheBaseIndAndRep[1]) % CACHE_SIZE
 	  cached [index] = w + 2 
 	  if sequence[w + 1] % 4 == 1 and sequence[w + 1] > 1 :	# if "n % 4 == 1 && n > 1" then n is a special odd
-	    print "L"
+	    #print "L"
 	    n2 = (sequence[w + 1] - 1) / 4 * 6 + 2	# calculate corresponding even
-	    if n2 < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n2 within cache range?
-	      print "m"
+	    if cacheBaseIndAndRep[1] <= n2 < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n2 within cache range?
+	      #print "m"
 	      index3 =  (cacheBaseIndAndRep[0] + n2 - cacheBaseIndAndRep[1]) % CACHE_SIZE
 	      cached[index3] = cached[index] - 2 # corresponding even is always minus 2
-    for w in range(20):
-      print "w: ", 999 - w, "  cached[w]: ", cached[999 - w]
-    print "c: ", c
+    #for w in range(12):
+      #print "w: ", w, "  cached[w]: ", cached[w]
+    #print "c: ", c
     assert c > 0
     return c    
 
@@ -217,10 +209,12 @@ def collatz_eval (i, j) :
       
       # see if new maximum was found
       if currentCycleLength > maxCycleLength :
-	print "******************************************************** max at: ", current
-	print smallerRngeLmt
+	#print "******************************************************** max at: ", current
+	#print smallerRngeLmt
 	maxCycleLength = currentCycleLength
       current = current + 1
+    for y in range(CACHE_SIZE) :
+      cached[y] = 0
     # <your code>
     #v = 1
     assert maxCycleLength > 0
@@ -232,7 +226,7 @@ def collatz_eval (i, j) :
 
 def collatz_print (w, i, j, v) :
     """
-    prints the values of i, j, and v
+    prints the values of i, j, and vgit 
     w is a writer
     i is the beginning of the range, inclusive
     j is the end of the range, inclusive
@@ -281,9 +275,9 @@ cacheBaseIndAndRep = [0, 1]
 a = [0, 0]
 cached = [0, ]
 h = [0, ]
-CACHE_SIZE = 1000
+CACHE_SIZE = 10000
 for n in range(CACHE_SIZE - 1): 	# setting up cache of size CACHE_SIZE
   cached += h			# with initial values of 0
-print cached
+#print cached
 print len(cached)
 collatz_solve(sys.stdin, sys.stdout)
