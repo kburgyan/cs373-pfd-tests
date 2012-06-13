@@ -24,6 +24,7 @@ def collatz_read (r, a) :
     l = s.split()
     a[0] = int(l[0])
     a[1] = int(l[1])
+    a[2] = int(l[2])
     assert a[0] > 0
     assert a[1] > 0
     return True
@@ -44,7 +45,11 @@ def cachePrevCycleNum(sequence, index) :
     if cacheBaseIndAndRep[1] <= sequence[w + 1] < cacheBaseIndAndRep[1] + CACHE_SIZE : # is previous n within cache range?
       index2 = (cacheBaseIndAndRep[0] + sequence[w + 1] - cacheBaseIndAndRep[1]) % CACHE_SIZE
       #print "f"
-      cached[index2] = cached[index] + w + 1
+      if index == -1 :
+	#print "seq0: ", sequence[0]
+	cached[index2] = baseCached[sequence[0] - 1] + w + 1
+      else :
+	cached[index2] = cached[index] + w + 1
       #****************************************************
       lookForSpecialOdd(sequence[w + 1], index2)
       #****************************************************
@@ -82,7 +87,9 @@ def cycle_length (n) :
     while n > 1 :
 	if n <= BASE_CACHE_SIZE :
 	  #print"baseCached"
-	  return baseCached[originN - 1]
+	  cachePrevCycleNum(sequence, -1)
+	  c = cached[(cacheBaseIndAndRep[0] + originN - cacheBaseIndAndRep[1]) % CACHE_SIZE]
+	  break # breaks out of the while loop
 	else:
 	    if cacheBaseIndAndRep[1] <= n < cacheBaseIndAndRep[1] + CACHE_SIZE : # is n within cache range?
 	      #print "A"
@@ -319,7 +326,7 @@ def collatz_eval (i, j) :
     cacheBaseIndAndRep[1] = current
     while current <= max :
       currentCycleLength = cycle_length(current)
-      
+      #print "current: ", current
       
       
       # see if new maximum was found
@@ -364,6 +371,13 @@ def collatz_solve (r, w) :
 	smallerRngeLmt = a[0]
 	collatz_evalBase()
         v = collatz_eval(a[0], a[1])
+        
+        if v != a[2] :
+	  print "****************************************************************************"
+	  print "Wrong: For i: ", a[0], "   and j: ", a[1], "*********************************************************"
+	  print " should be: ", a[2], "  but calculates: ", v, "*********************************************************"
+	  print "****************************************************************************"
+	assert a[2] == v
         collatz_print(w, a[0], a[1], v)
         
         
@@ -389,7 +403,8 @@ bcacheBaseIndAndRep = [0, 1]
 			# that's stored at the cache's base index
 			# denoted by cacheBaseIndex
 #smallerRngeLmt = 0
-a = [0, 0]
+a = [0, 0, 0]
+#a = [0, 0]
 cached = [0, ]
 baseCached = [0, ]
 h = [0, ]
